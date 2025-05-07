@@ -1,0 +1,149 @@
+#install packages
+install.packages("openxlsx")
+library(dplyr)
+library(tidyverse)
+
+
+#import dataset
+library(readxl)
+df_1 <- read_excel("D:/Hung/Hung/paper 2/data spss/2022-Western blotting result of Epo project_ exclude outlier.xlsx", sheet = 1)
+
+View(df_1)
+names(df_1)
+head(df_1)
+
+#clear dataset
+
+PFC_DMSO <- df_1[-c((12:21), (33:42),(57:63)),] %>% 
+  na.omit(df_1) #remove unwanted rows
+
+
+view(PFC_DMSO)
+glimpse(PFC_DMSO)
+colnames(PFC_DMSO) <- PFC_DMSO[1, ] #recolumn names
+view(PFC_DMSO)
+PFC_DMSO <- PFC_DMSO[-1, ] #remove first row
+view(PFC_DMSO)
+#mutate new column
+
+
+
+
+#import data sheet2
+df_2 <- 
+  read_excel("D:/Hung/Hung/paper 2/data spss/2022-Western blotting result of Epo project_ exclude outlier.xlsx", 
+             sheet = 2)
+View(df_2)
+HIP_DMSO <- df_2[-c((12:21), (33:42),(57:63)),] %>% 
+  na.omit(df_2) #remove unwanted rows
+view(HIP_DMSO)
+
+colnames(HIP_DMSO) <- HIP_DMSO[1, ] #recolumn names
+
+HIP_DMSO <- HIP_DMSO[-1, ] #remove first row
+view(HIP_DMSO)
+
+#import data sheet 3
+
+df_3 <- 
+  read_excel("D:/Hung/Hung/paper 2/data spss/2022-Western blotting result of Epo project_ exclude outlier.xlsx", 
+             sheet = 3)
+
+View(df_3)
+PFC_epo <- df_3[-c((12:21), (37:46),(59:65)),] %>% 
+  na.omit(df_3) #remove unwanted rows
+view(PFC_epo)
+
+colnames(PFC_epo) <- PFC_epo[1, ] #recolumn names
+
+PFC_epo <- PFC_epo[-1, ] #remove first row
+view(PFC_epo)
+
+#import data sheet 4
+
+df_4 <- 
+  read_excel("D:/Hung/Hung/paper 2/data spss/2022-Western blotting result of Epo project_ exclude outlier.xlsx", 
+                       sheet = 4)
+
+View(df_4)
+HIP_epo <- df_4[-c((12:21), (37:46),(59:65)),] %>% 
+  na.omit(df_4) #remove unwanted rows
+view(HIP_epo)
+
+colnames(HIP_epo) <- HIP_epo[1, ] #recolumn names
+
+HIP_epo <- HIP_epo[-1, ] #remove first row
+view(HIP_epo)
+
+Group <-  c(rep("con", 9), rep("uns", 10), rep("sus", 12))
+Treatment <- c(rep("DMSO", 9+10+12))
+
+
+#select wanted column
+#1. PFC_DMSO
+
+
+view(PFC_DMSO)
+
+PFC_DMSO_1 <- PFC_DMSO[ ,-c((1:4), (7:8), (11:12), (15:16), (19:20),
+                          (23:24), (27:28), (31:32),
+                          (35:36),
+                          (39:40), (43:44), (47:48))] 
+
+PFC_DMSO_2 <- cbind(PFC_DMSO_1, Group, Treatment)
+
+
+head(PFC_DMSO_2)
+glimpse(PFC_DMSO_2)
+
+##2. HIP_DMSO
+HIP_DMSO <- cbind(HIP_DMSO, Group, Treatment)
+names(HIP_DMSO)
+HIP_DMSO_1 <- HIP_DMSO[ ,-c((1:4), (7:8), (11:12), (15:16), (19:20),
+                            (23:24), (27:28), (31:32),
+                            (35:36),
+                            (39:40), (43:44), (47:48))] 
+glimpse(HIP_DMSO_1)
+
+##3. Epo_PFC
+
+view(PFC_epo)
+Group <-  c(rep("con", 9), rep("uns", 14), rep("sus", 11))
+Treatment <- c(rep("Epothilone D", 9+14+11))
+PFC_epo_1 <- cbind(PFC_epo, Group, Treatment)
+names(PFC_epo_1)
+PFC_epo_2 <- PFC_epo_1[ ,-c((1:4), (7:8), (11:12), (15:16), (19:20),
+                            (23:24), (27:28), (31:32),
+                            (35:36),
+                            (39:40), (43:44), (47:48)), ] 
+glimpse(PFC_epo_2)
+
+##4. Epo_HIP
+
+view(HIP_epo)
+Group <-  c(rep("con", 9), rep("uns", 14), rep("sus", 11))
+Treatment <- c(rep("Epothilone D", 9+14+11))
+HIP_epo_1 <- cbind(HIP_epo, Group, Treatment)
+names(HIP_epo)
+HIP_epo_2 <- HIP_epo_1[ ,-c((1:4), (7:8), (11:12), (15:16), (19:20),
+                        (23:24), (27:28), (31:32),
+                        (35:36),
+                        (39:40), (43:44), (47:48)), ] 
+glimpse(HIP_epo_2)
+
+
+
+#combine the PFC
+total_PFC <- rbind(PFC_DMSO_2, PFC_epo_2)
+view(total_PFC)
+#combine the HIP
+total_HIP <- rbind(HIP_DMSO_1, HIP_epo_2)
+library(writexl)
+library(openxlsx)
+
+write.xlsx(total_PFC,"D:/2023-Epo papers/Data house/PFC_exclude_EpoD_10112023.xlsx", 
+            sheetName="PFC")
+
+
+write.xlsx(total_HIP,"D:/2023-Epo papers/Data house/HIP_exclude_EpoD_10112023.xlsx", 
+           sheetName="HIP")
