@@ -1,0 +1,131 @@
+library(tidyverse)
+#import dataset
+
+library(readxl)
+df_1 <- read_excel("D:/2023-Epo papers/Data house/PFC_exclude_EpoD_10112023.xlsx")
+glimpse(df_1)
+names(df_1)
+
+# Change character to numeric
+
+str(df_1)
+
+df_1 <- df_1 %>% mutate_at(1:24, as.numeric)
+
+
+
+
+df_DMSO_con <- subset(df_1, Group == "con" & Treatment=="DMSO")                                                                   
+head(df_DMSO_con)
+
+
+
+
+#I. Normalized data method_2:
+
+##. Tub      
+df_1$Tub_No2 <- 1+(df_1$Tub-mean(df_DMSO_con$Tub))/(sd(df_DMSO_con$Tub))
+
+##. Ace
+df_1$Ace_No2 <- 1+(df_1$Ace-mean(df_DMSO_con$Ace))/(sd(df_DMSO_con$Ace))
+
+##. MAP2
+df_1$MAP2_No2 <- 1+(df_1$MAP2-mean(df_DMSO_con$MAP2))/(sd(df_DMSO_con$MAP2))
+
+##. St1
+df_1$St1_No2 <- 1+(df_1$St1-mean(df_DMSO_con$St1))/(sd(df_DMSO_con$St1))
+
+##. St2
+df_1$St2_No2 <- 1+(df_1$St2-mean(df_DMSO_con$St2))/(sd(df_DMSO_con$St2))
+
+##. ps16
+df_1$ps16_No2 <- 1+(df_1$ps16-mean(df_DMSO_con$ps16))/(sd(df_DMSO_con$ps16))
+
+##. ps25
+df_1$ps25_No2 <- 1+(df_1$ps25-mean(df_DMSO_con$ps25))/(sd(df_DMSO_con$ps25))
+
+##. ps38
+df_1$ps38_No2 <- 1+(df_1$ps38-mean(df_DMSO_con$ps38))/(sd(df_DMSO_con$ps38))
+
+##. ps73
+df_1$ps73_No2 <- 1+(df_1$ps73-mean(df_DMSO_con$ps73))/(sd(df_DMSO_con$ps73))
+
+##. GRP
+df_1$GRP_No2 <- 1+(df_1$GRP-mean(df_DMSO_con$GRP))/(sd(df_DMSO_con$GRP))
+
+##. CHOP
+df_1$CHOP_No2 <- 1+(df_1$CHOP-mean(df_DMSO_con$CHOP))/(sd(df_DMSO_con$CHOP))
+
+view(df_1)
+
+#Export the data
+
+write.xlsx(df_1,"D:/2023-Epo papers/Data house/PFC_normalizeed_meth2_10122023.xlsx", 
+           sheetName="PFC")
+
+
+######********HIP****##########
+######*
+#import dataset
+
+library(readxl)
+df_1 <- read_excel("D:/2023-Epo papers/Data house/HIP_exclude_EpoD_10112023.xlsx")
+names(df_1)
+
+# Change character to numeric
+
+str(df_1)
+
+df_1 <- df_1 %>% mutate_at(1:24, as.numeric)
+view(df_2)
+
+
+
+df_DMSO_con <- subset(df_1, Group == "con" & Treatment=="DMSO")                                                                   
+head(df_DMSO_con)
+
+
+
+
+#I. Normalized data method_2:
+
+##. Tub      
+df_1$Tub_No2 <- 1+(df_1$Tub-mean(df_DMSO_con$Tub))/(sd(df_DMSO_con$Tub))
+
+##. Ace
+df_1$Ace_No2 <- 1+(df_1$Ace-mean(df_DMSO_con$Ace))/(sd(df_DMSO_con$Ace))
+
+##. MAP2
+df_1$MAP2_No2 <- 1+(df_1$MAP2-mean(df_DMSO_con$MAP2))/(sd(df_DMSO_con$MAP2))
+
+##. St1
+df_1$St1_No2 <- 1+(df_1$St1-mean(df_DMSO_con$St1))/(sd(df_DMSO_con$St1))
+
+##. St2
+df_1$St2_No2 <- 1+(df_1$St2-mean(df_DMSO_con$St2))/(sd(df_DMSO_con$St2))
+
+##. ps16
+df_1$ps16_No2 <- 1+(df_1$ps16-mean(df_DMSO_con$ps16))/(sd(df_DMSO_con$ps16))
+
+##. ps25
+df_1$ps25_No2 <- 1+(df_1$ps25-mean(df_DMSO_con$ps25))/(sd(df_DMSO_con$ps25))
+
+##. ps38
+df_1$ps38_No2 <- 1+(df_1$ps38-mean(df_DMSO_con$ps38))/(sd(df_DMSO_con$ps38))
+
+##. ps73
+df_1$ps73_No2 <- 1+(df_1$ps73-mean(df_DMSO_con$ps73))/(sd(df_DMSO_con$ps73))
+
+##. GRP
+df_1$GRP_No2 <- 1+(df_1$GRP-mean(df_DMSO_con$GRP))/(sd(df_DMSO_con$GRP))
+
+##. CHOP
+df_1$CHOP_No2 <- 1+(df_1$CHOP-mean(df_DMSO_con$CHOP))/(sd(df_DMSO_con$CHOP))
+
+view(df_1)
+
+
+#Export the data
+
+write.xlsx(df_1,"D:/2023-Epo papers/Data house/HIP_normalizeed_meth2_10122023.xlsx", 
+           sheetName="HIP")          
