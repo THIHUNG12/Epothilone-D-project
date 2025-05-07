@@ -1,0 +1,429 @@
+######I. Multiple t-test with p.adjust.method= bonferroni######
+
+library(rstatix)
+library(readxl)
+A. Normalized method 1
+# 1. PFC 
+PFC_df<- read_excel("D:/2023-Epo papers/Data house/DATA/PFC_normalized_DMSO_12062023.xlsx", sheet = 2)
+View(PFC_df)
+glimpse(PFC_df)
+
+# Change to pivot longer 
+PFC_df1 <- PFC_df %>% pivot_longer(
+  cols = !c(Group, Treatment),
+  names_to = 'Proteins',
+  values_to = 'Density')
+
+glimpse(PFC_df1)
+PFC_df2 <- subset(PFC_df1, Treatment == 'DMSO')
+
+stat.test <- PFC_df2 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+####Epothilone D
+PFC_df3 <- subset(PFC_df1, Treatment == 'Epothilone D')
+
+stat.test <- PFC_df3 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+
+###2.HIP
+HIP_df<- read_excel("D:/2023-Epo papers/Data house/DATA/HIP_normalized_DMSO_12062023.xlsx", sheet = 1)
+View(HIP_df)
+glimpse(HIP_df)
+# Change to pivot longer 
+HIP_df1 <- HIP_df %>% pivot_longer(
+  cols = !c(Group, Treatment),
+  names_to = 'Proteins',
+  values_to = 'Density')
+
+HIP_df2 <- subset(HIP_df1, Treatment == 'DMSO')
+
+stat.test <- HIP_df2 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+####Epothilone D
+HIP_df3 <- subset(HIP_df1, Treatment == 'Epothilone D')
+
+stat.test <- HIP_df3 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+
+
+######B. each normalized 
+
+# 1. PFC 
+PFC_df<- read_excel("D:/2023-Epo papers/Data house/DATA/PFC_normalized_DMSO_12062023.xlsx", sheet = 1)
+View(PFC_df)
+glimpse(PFC_df)
+
+# Change to pivot longer 
+PFC_df1 <- PFC_df %>% pivot_longer(
+  cols = !c(Group, Treatment),
+  names_to = 'Proteins',
+  values_to = 'Density')
+
+glimpse(PFC_df1)
+PFC_df2 <- subset(PFC_df1, Treatment == 'DMSO')
+
+stat.test <- PFC_df2 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+####Epothilone D
+PFC_df3 <- subset(PFC_df1, Treatment == 'Epothilone D')
+
+stat.test <- PFC_df3 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+
+###2. HIP
+HIP_df<- read_excel("D:/2023-Epo papers/Data house/DATA/HIP_normalized_DMSO_12062023.xlsx", sheet = 2)
+View(HIP_df)
+glimpse(HIP_df)
+# Change to pivot longer 
+HIP_df1 <- HIP_df %>% pivot_longer(
+  cols = !c(Group, Treatment),
+  names_to = 'Proteins',
+  values_to = 'Density')
+
+HIP_df2 <- subset(HIP_df1, Treatment == 'DMSO')
+
+stat.test <- HIP_df2 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+####Epothilone D
+HIP_df3 <- subset(HIP_df1, Treatment == 'Epothilone D')
+
+stat.test <- HIP_df3 %>%
+  group_by(Proteins) %>%
+  t_test(Density ~ Group, p.adjust.method = "bonferroni")
+# Remove unnecessary columns and display the outputs
+stat.test %>% select(-.y., -statistic, -df)
+
+######II. Two way ANOVA######
+######Run 2 way ANOVA method_2_ PFC***************************
+
+#1. Install and library packages
+library(readxl)
+library(emmeans)
+install.packages("psych")
+library(psych)
+library(writexl)
+
+
+#2. Import data set
+
+df_1 <- read_excel("D:/2023-Epo papers/Data house/PFC_normalizeed_meth2_10122023.xlsx")
+
+  names(df_1)
+
+df2 <- df_1[, 25:38]
+glimpse(df2)
+#3. Extract data of control and susceptible mice
+
+df3 <- subset(df2, Group == "con"|Group == "sus")
+view(df3)
+
+
+#4. Description of data: mean, SE
+?describeBy
+describeBy(df3~Group*Treatment, skew=F, range=F)
+
+
+#5. Run 2 way-ANOVA**********
+
+# Two-way ANOVA with interaction effect
+
+###Tub************
+a = aov(Tub_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+#Bonferroni comparison
+pairwise.t.test(my_data$len, my_data$dose,
+                p.adjust.method = "bonferroni")
+
+
+###Ace************
+a = aov(Ace_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+
+###Tyro************
+a = aov(Tyro_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+
+###MAP2************
+a = aov(MAP2_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+
+###St1************
+a = aov(St1_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+###ps16************
+a = aov(ps16_No2 ~ Group * Treatment, data = df3)
+  summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+###ps25************
+a = aov(ps25_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+###ps38************
+a = aov(ps38_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+
+###St2************
+a = aov(St2_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+###pS73************
+a = aov(ps73_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+###GRP************
+a = aov(GRP_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+###CHOP************
+a = aov(CHOP_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+
+
+
+
+######Run 2 way ANOVA method_2_ HIP***************************
+
+#1. Install and library packages
+library(readxl)
+library(emmeans)
+install.packages("psych")
+library(psych)
+library(writexl)
+
+
+#2. Import data set
+
+df_1 <- read_excel("D:/2023-Epo papers/Data house/HIP_normalizeed_meth2_10122023.xlsx")
+
+names(df_1)
+
+df2 <- df_1[, 25:38]
+glimpse(df2)
+#3. Extract data of control and susceptible mice
+
+df3 <- subset(df2, Group == "con"|Group == "sus")
+view(df3)
+
+
+#4. Description of data: mean, SE
+
+describeBy(df3~Group*Treatment, skew=F, range=F)
+
+
+#5. Run 2 way-ANOVA**********
+
+# Two-way ANOVA with interaction effect
+
+###Tub************
+a = aov(Tub_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+
+
+###Ace************
+a = aov(Ace_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+
+
+###Tyro************
+a = aov(Tyro_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+
+###MAP2************
+a = aov(MAP2_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+
+###St1************
+a = aov(St1_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+###ps16************
+a = aov(ps16_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+###ps25************
+a = aov(ps25_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+
+###ps38************
+a = aov(ps38_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+
+###St2************
+a = aov(St2_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+
+
+###pS73************
+a = aov(ps73_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+###GRP************
+a = aov(GRP_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
+###CHOP************
+a = aov(CHOP_No2 ~ Group * Treatment, data = df3)
+summary(a)
+
+##pairwiseposthoc
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="bonferroni") 
+marginal$contrasts
+
+marginal = emmeans(a,pairwise ~ Group:Treatment,adjust="tukey") 
+marginal$contrasts
+
+
